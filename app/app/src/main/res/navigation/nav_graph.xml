@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/FirstFragment">
+
+    <fragment
+        android:id="@+id/FirstFragment"
+        android:name="com.antonvinicius.keepnotes.ui.NotesFragment"
+        tools:layout="@layout/fragment_notes" >
+        <action
+            android:id="@+id/action_FirstFragment_to_NoteDetailFragment"
+            app:destination="@id/NoteDetailFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_NoteCreateOrEditFragment"
+            app:destination="@id/NoteCreateOrEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NoteDetailFragment"
+        android:name="com.antonvinicius.keepnotes.ui.NoteDetailFragment"
+        tools:layout="@layout/fragment_note_detail" >
+        <action
+            android:id="@+id/action_NoteDetailFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+        <argument
+            android:name="noteId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_NoteDetailFragment_to_NoteCreateOrEditFragment"
+            app:destination="@id/NoteCreateOrEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/NoteCreateOrEditFragment"
+        android:name="com.antonvinicius.keepnotes.ui.NoteCreateOrEditFragment"
+        tools:layout="@layout/fragment_note_create_or_edit"
+        >
+        <action
+            android:id="@+id/action_NoteCreateOrEditFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment"
+            app:popUpTo="@id/FirstFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="noteId"
+            app:argType="string" />
+    </fragment>
+</navigation>
