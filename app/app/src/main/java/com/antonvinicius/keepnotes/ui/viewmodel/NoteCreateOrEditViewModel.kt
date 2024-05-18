@@ -10,11 +10,7 @@ import com.antonvinicius.keepnotes.retrofit.ApiResult
 class NoteCreateOrEditViewModel(
     private val noteRepository: NoteRepository, private val noteId: String?
 ) : ViewModel() {
-    val noteLiveData = noteRepository.noteLiveData
-
-    suspend fun findNote() {
-        noteId?.let { noteRepository.noteById(noteId) }
-    }
+    fun findNote() = noteId?.let { noteRepository.noteById(it) }
 
     fun handleCreateOrUpdateEvents(
         whenCreate: () -> Unit, whenUpdate: () -> Unit

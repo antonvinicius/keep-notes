@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.antonvinicius.keepnotes.R
+import com.antonvinicius.keepnotes.database.AppDatabase
 import com.antonvinicius.keepnotes.databinding.FragmentNotesBinding
 import com.antonvinicius.keepnotes.model.NoteDto
 import com.antonvinicius.keepnotes.repository.NoteRepository
@@ -43,7 +44,9 @@ class NotesFragment : Fragment() {
 
     private val viewModel by viewModels<NotesViewModel>(factoryProducer = {
         NotesViewModelFactory(
-            NoteRepository(WebClient(RetrofitInstance()))
+            NoteRepository(
+                WebClient(RetrofitInstance()), AppDatabase.getDatabase(requireContext()).noteDao()
+            )
         )
     })
 
@@ -66,7 +69,7 @@ class NotesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.apiResultLiveData.observe(viewLifecycleOwner) { result ->
+        viewModel.resultLiveData.observe(viewLifecycleOwner) { result ->
             binding.progressBar.visibility = View.GONE
             result.data?.let {
                 adapter.fillList(result.data)
@@ -81,9 +84,7 @@ class NotesFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
 
-                is ApiResult.Success -> {
-                    showSuccessMessage()
-                }
+                is ApiResult.Success -> {}
             }
         }
 

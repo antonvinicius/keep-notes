@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.antonvinicius.keepnotes.R
+import com.antonvinicius.keepnotes.database.AppDatabase
 import com.antonvinicius.keepnotes.databinding.FragmentNoteCreateOrEditBinding
 import com.antonvinicius.keepnotes.repository.NoteRepository
 import com.antonvinicius.keepnotes.retrofit.ApiResult
@@ -34,33 +35,18 @@ class NoteCreateOrEditFragment : Fragment() {
             NoteRepository(
                 WebClient(
                     RetrofitInstance()
-                )
+                ), AppDatabase.getDatabase(requireContext()).noteDao()
             ), noteId
         )
     })
 
     override fun onResume() {
         super.onResume()
-        viewModel.noteLiveData.observe(viewLifecycleOwner) { result ->
-            result.data?.let {
+        viewModel.findNote()?.observe(viewLifecycleOwner) { result ->
+            result?.let {
                 binding.title.setText(it.title)
                 binding.content.setText(it.content)
             }
-
-            when (result) {
-                is ApiResult.Error -> {
-                    showErrorMessage(result.error)
-                }
-
-                is ApiResult.Loading -> {}
-                is ApiResult.Success -> {
-                    showSuccessMessage()
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.findNote()
         }
     }
 
@@ -89,7 +75,6 @@ class NoteCreateOrEditFragment : Fragment() {
                         }
 
                         is ApiResult.Success -> {
-                            showSuccessMessage()
                             findNavController().navigateUp()
                         }
                     }

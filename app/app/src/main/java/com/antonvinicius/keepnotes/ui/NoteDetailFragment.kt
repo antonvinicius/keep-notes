@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.antonvinicius.keepnotes.R
+import com.antonvinicius.keepnotes.database.AppDatabase
 import com.antonvinicius.keepnotes.databinding.FragmentNoteDetailBinding
 import com.antonvinicius.keepnotes.repository.NoteRepository
 import com.antonvinicius.keepnotes.retrofit.ApiResult
@@ -37,7 +38,9 @@ class NoteDetailFragment : Fragment(), MenuProvider {
 
     private val viewModel by viewModels<NoteDetailViewModel>(factoryProducer = {
         NoteDetailViewModelFactory(
-            NoteRepository(WebClient(RetrofitInstance())), noteId
+            NoteRepository(
+                WebClient(RetrofitInstance()), AppDatabase.getDatabase(requireContext()).noteDao()
+            ), noteId
         )
     })
 
@@ -53,7 +56,6 @@ class NoteDetailFragment : Fragment(), MenuProvider {
 
                         is ApiResult.Loading -> {}
                         is ApiResult.Success -> {
-                            showSuccessMessage()
                             findNavController().navigateUp()
                         }
                     }
@@ -66,28 +68,12 @@ class NoteDetailFragment : Fragment(), MenuProvider {
 
     override fun onResume() {
         super.onResume()
-        viewModel.noteLiveData.observe(viewLifecycleOwner) { result ->
-            result.data?.let {
+        viewModel.noteFindById()?.observe(viewLifecycleOwner) { result ->
+            result.let {
                 setTitle(it.title)
                 binding.title.text = it.title
                 binding.content.text = it.content
             }
-
-            when (result) {
-                is ApiResult.Error -> {
-                    showErrorMessage(result.error)
-                }
-
-                is ApiResult.Loading -> {}
-
-                is ApiResult.Success -> {
-                    showSuccessMessage()
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.noteFindById()
         }
     }
 
