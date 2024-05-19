@@ -70,5 +70,7 @@ dependencies {
     // LiveData
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
 
+    implementation("io.insert-koin:koin-android:3.5.6")
+
 
 }

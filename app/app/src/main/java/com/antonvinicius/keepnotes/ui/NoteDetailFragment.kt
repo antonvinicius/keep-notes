@@ -10,23 +10,18 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.antonvinicius.keepnotes.R
-import com.antonvinicius.keepnotes.database.AppDatabase
 import com.antonvinicius.keepnotes.databinding.FragmentNoteDetailBinding
-import com.antonvinicius.keepnotes.repository.NoteRepository
 import com.antonvinicius.keepnotes.retrofit.ApiResult
-import com.antonvinicius.keepnotes.retrofit.RetrofitInstance
-import com.antonvinicius.keepnotes.retrofit.WebClient
 import com.antonvinicius.keepnotes.ui.viewmodel.NoteDetailViewModel
-import com.antonvinicius.keepnotes.ui.viewmodel.NoteDetailViewModelFactory
 import com.antonvinicius.keepnotes.util.setTitle
 import com.antonvinicius.keepnotes.util.showErrorMessage
-import com.antonvinicius.keepnotes.util.showSuccessMessage
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class NoteDetailFragment : Fragment(), MenuProvider {
     private var _binding: FragmentNoteDetailBinding? = null
@@ -36,13 +31,7 @@ class NoteDetailFragment : Fragment(), MenuProvider {
         arguments?.getString(NOTE_ID_KEY)
     }
 
-    private val viewModel by viewModels<NoteDetailViewModel>(factoryProducer = {
-        NoteDetailViewModelFactory(
-            NoteRepository(
-                WebClient(RetrofitInstance()), AppDatabase.getDatabase(requireContext()).noteDao()
-            ), noteId
-        )
-    })
+    private val viewModel: NoteDetailViewModel by viewModel { parametersOf(noteId) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

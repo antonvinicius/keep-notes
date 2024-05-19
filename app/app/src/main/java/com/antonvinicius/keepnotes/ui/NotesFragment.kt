@@ -25,6 +25,8 @@ import com.antonvinicius.keepnotes.util.setTitle
 import com.antonvinicius.keepnotes.util.showErrorMessage
 import com.antonvinicius.keepnotes.util.showSuccessMessage
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.get
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
@@ -42,13 +44,7 @@ class NotesFragment : Fragment() {
         )
     }
 
-    private val viewModel by viewModels<NotesViewModel>(factoryProducer = {
-        NotesViewModelFactory(
-            NoteRepository(
-                WebClient(RetrofitInstance()), AppDatabase.getDatabase(requireContext()).noteDao()
-            )
-        )
-    })
+    private val viewModel: NotesViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

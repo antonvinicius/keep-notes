@@ -10,14 +10,4 @@ import com.antonvinicius.keepnotes.model.NoteDto
 @Database(entities = [NoteDto::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
-
-    companion object {
-        private var instance: AppDatabase? = null
-
-        fun getDatabase(context: Context): AppDatabase {
-            return instance ?: Room.databaseBuilder(
-                context.applicationContext, AppDatabase::class.java, "note_database"
-            ).build()
-        }
-    }
 }

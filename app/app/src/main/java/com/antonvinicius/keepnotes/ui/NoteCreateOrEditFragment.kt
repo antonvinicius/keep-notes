@@ -5,22 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.antonvinicius.keepnotes.R
-import com.antonvinicius.keepnotes.database.AppDatabase
 import com.antonvinicius.keepnotes.databinding.FragmentNoteCreateOrEditBinding
-import com.antonvinicius.keepnotes.repository.NoteRepository
 import com.antonvinicius.keepnotes.retrofit.ApiResult
-import com.antonvinicius.keepnotes.retrofit.RetrofitInstance
-import com.antonvinicius.keepnotes.retrofit.WebClient
 import com.antonvinicius.keepnotes.ui.viewmodel.NoteCreateOrEditViewModel
-import com.antonvinicius.keepnotes.ui.viewmodel.NoteCreateOrEditViewModelFactory
 import com.antonvinicius.keepnotes.util.setTitle
 import com.antonvinicius.keepnotes.util.showErrorMessage
-import com.antonvinicius.keepnotes.util.showSuccessMessage
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class NoteCreateOrEditFragment : Fragment() {
     private var _binding: FragmentNoteCreateOrEditBinding? = null
@@ -30,15 +25,7 @@ class NoteCreateOrEditFragment : Fragment() {
         arguments?.getString(NoteDetailFragment.NOTE_ID_KEY)
     }
 
-    private val viewModel by viewModels<NoteCreateOrEditViewModel>(factoryProducer = {
-        NoteCreateOrEditViewModelFactory(
-            NoteRepository(
-                WebClient(
-                    RetrofitInstance()
-                ), AppDatabase.getDatabase(requireContext()).noteDao()
-            ), noteId
-        )
-    })
+    private val viewModel: NoteCreateOrEditViewModel by viewModel { parametersOf(noteId) }
 
     override fun onResume() {
         super.onResume()
